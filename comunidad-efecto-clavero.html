@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Comunidad — Efecto Clavero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --negro: #0a0907;
+    --charcoal: #1e1c19;
+    --charcoal-mid: #2c2a26;
+    --cuero: #6b4f3a;
+    --oro: #c9a84c;
+    --oro-suave: #d4b96a;
+    --gris-texto: #9a9590;
+    --crema: #e8e0d0;
+    --crema-oscura: #c4bba8;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--negro);
+    color: var(--crema);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--negro); }
+  ::-webkit-scrollbar-thumb { background: var(--oro); }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 60px;
+    background: linear-gradient(to bottom, rgba(10,9,7,0.95) 0%, transparent 100%);
+    transition: all 0.4s ease;
+  }
+
+  nav.scrolled {
+    padding: 18px 60px;
+    background: rgba(10,9,7,0.98);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--crema);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--oro); }
+
+  .nav-cta {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--negro);
+    background: var(--oro);
+    padding: 11px 26px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+
+  .nav-cta:hover { background: var(--oro-suave); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(107,79,58,0.2) 0%, transparent 60%),
+      linear-gradient(135deg, #0a0907 0%, #1a1510 50%, #0a0907 100%);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,9,7,0.95) 0%, rgba(10,9,7,0.4) 60%, transparent 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 60px 120px;
+    max-width: 900px;
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--oro);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--oro);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(50px, 7vw, 100px);
+    font-weight: 900;
+    line-height: 0.92;
+    color: var(--crema);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.5s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--oro);
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.2vw, 26px);
+    font-style: italic;
+    color: var(--crema-oscura);
+    margin-bottom: 48px;
+    line-height: 1.5;
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.7s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.9s forwards;
+  }
+
+  .btn-primary {
+    background: var(--oro);
+    color: var(--negro);
+    padding: 16px 40px;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-family: 'Barlow', sans-serif;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--oro-suave); }
+
+  .btn-ghost {
+    color: var(--crema-oscura);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s ease;
+    font-family: 'Barlow', sans-serif;
+  }
+
+  .btn-ghost:hover { color: var(--oro); }
+  .btn-ghost::after { content: '→'; font-size: 16px; transition: transform 0.3s ease; }
+  .btn-ghost:hover::after { transform: translateX(4px); }
+
+  /* PRICE BADGE */
+  .price-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 12px 24px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.8s forwards;
+  }
+
+  .price-badge strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--oro);
+  }
+
+  .price-badge span {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--gris-texto);
+    text-transform: uppercase;
+  }
+
+  /* SECTIONS */
+  section { padding: 120px 60px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--oro);
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(34px, 4vw, 58px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--crema);
+    margin-bottom: 24px;
+  }
+
+  .section-title em { font-style: italic; color: var(--oro); }
+
+  /* QUOTE */
+  .quote-section {
+    background: var(--charcoal);
+    padding: 80px 60px;
+    border-top: 1px solid rgba(201,168,76,0.12);
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quote-section::before {
+    content: '❝';
+    position: absolute;
+    left: 50px;
+    top: 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+  }
+
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.2vw, 26px);
+    font-style: italic;
+    color: var(--crema);
+    text-align: center;
+    max-width: 860px;
+    margin: 0 auto;
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-text strong { color: var(--oro); font-style: normal; font-weight: 500; }
+
+  /* PROBLEMA */
+  .problema-grid {
+    max-width: 1300px;
+    margin: 60px auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .problema-item {
+    background: var(--charcoal-mid);
+    padding: 44px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    transition: background 0.3s ease;
+  }
+
+  .problema-item:hover { background: #2a2720; }
+
+  .problema-icon {
+    width: 8px;
+    height: 8px;
+    background: rgba(201,168,76,0.3);
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .problema-item p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--gris-texto);
+  }
+
+  .problema-item p strong { color: var(--crema); font-weight: 400; }
+
+  /* PILARES */
+  .pilares-grid {
+    max-width: 1300px;
+    margin: 60px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .pilar {
+    background: var(--charcoal-mid);
+    padding: 50px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.4s ease;
+  }
+
+  .pilar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--oro);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+
+  .pilar:hover { background: #2a2720; }
+  .pilar:hover::before { transform: scaleX(1); }
+
+  .pilar-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 70px;
+    font-weight: 900;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    margin-bottom: -16px;
+  }
+
+  .pilar-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--crema);
+    margin-bottom: 6px;
+  }
+
+  .pilar-sub {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 24px;
+  }
+
+  .pilar-divider {
+    width: 36px;
+    height: 1px;
+    background: rgba(201,168,76,0.3);
+    margin-bottom: 24px;
+  }
+
+  .pilar-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--gris-texto);
+  }
+
+  /* QUÉ HAY DENTRO */
+  .dentro-section {
+    background: var(--charcoal);
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .dentro-grid {
+    max-width: 1300px;
+    margin: 60px auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .dentro-item {
+    background: var(--charcoal-mid);
+    padding: 50px 44px;
+    position: relative;
+    transition: background 0.3s ease;
+  }
+
+  .dentro-item:hover { background: #282520; }
+
+  .dentro-num {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--oro);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .dentro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--crema);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .dentro-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--gris-texto);
+  }
+
+  .dentro-item-full {
+    grid-column: span 2;
+    background: rgba(201,168,76,0.04);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 50px 44px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .dentro-item-full .dentro-title {
+    font-size: 26px;
+    margin-bottom: 12px;
+  }
+
+  /* STATS */
+  .stats-row {
+    max-width: 1300px;
+    margin: 60px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .stat {
+    background: var(--charcoal-mid);
+    padding: 50px 40px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 60px;
+    font-weight: 900;
+    color: var(--oro);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gris-texto);
+    line-height: 1.5;
+  }
+
+  /* FILTRO */
+  .filtro-grid {
+    max-width: 1300px;
+    margin: 60px auto 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .filtro-col {
+    padding: 56px 44px;
+  }
+
+  .filtro-col:first-child { background: var(--charcoal-mid); }
+  .filtro-col:last-child { background: #1a1814; }
+
+  .filtro-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .filtro-si .filtro-label { color: var(--oro); }
+  .filtro-no .filtro-label { color: rgba(154,149,144,0.5); }
+
+  .filtro-items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .filtro-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .filtro-arrow {
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 16px;
+  }
+
+  .filtro-si .filtro-arrow { color: var(--oro); }
+  .filtro-no .filtro-arrow { color: rgba(154,149,144,0.4); }
+
+  .filtro-item p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .filtro-si .filtro-item p { color: var(--crema-oscura); }
+  .filtro-no .filtro-item p { color: rgba(154,149,144,0.5); }
+
+  /* PRECIO FINAL */
+  .precio-section {
+    background: linear-gradient(135deg, #0f0d0a 0%, #1a1510 50%, #0f0d0a 100%);
+    text-align: center;
+    padding: 160px 60px;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .precio-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 100px,
+      rgba(201,168,76,0.02) 100px,
+      rgba(201,168,76,0.02) 101px
+    );
+  }
+
+  .precio-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: rgba(201,168,76,0.04);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 70px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .precio-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 20px;
+  }
+
+  .precio-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(64px, 8vw, 96px);
+    font-weight: 900;
+    color: var(--crema);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .precio-amount span { color: var(--oro); }
+
+  .precio-period {
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--gris-texto);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .precio-includes {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 48px;
+    text-align: left;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    padding-top: 36px;
+  }
+
+  .precio-include-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .precio-include-item span:first-child {
+    color: var(--oro);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .precio-include-item p {
+    font-size: 14px;
+    color: var(--crema-oscura);
+    line-height: 1.5;
+  }
+
+  .precio-cta {
+    background: var(--oro);
+    color: var(--negro);
+    padding: 18px 48px;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: background 0.3s ease;
+    font-family: 'Barlow', sans-serif;
+    border: none;
+    cursor: pointer;
+  }
+
+  .precio-cta:hover { background: var(--oro-suave); }
+
+  .precio-disclaimer {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(154,149,144,0.4);
+    text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--negro);
+    padding: 60px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--crema);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-logo span { color: var(--oro); }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--gris-texto);
+    margin-top: 6px;
+  }
+
+  .footer-social { display: flex; gap: 28px; align-items: center; }
+
+  .social-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--gris-texto);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+  }
+
+  .social-link:hover { color: var(--oro); border-bottom-color: rgba(201,168,76,0.4); }
+  .social-link svg { width: 17px; height: 17px; fill: currentColor; }
+
+  .footer-copy {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(154,149,144,0.4);
+    text-align: right;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+  .reveal-delay-3 { transition-delay: 0.45s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    nav { padding: 24px 30px; }
+    nav.scrolled { padding: 16px 30px; }
+    .hero-content { padding: 0 30px 100px; }
+    section { padding: 90px 30px; }
+    .problema-grid { grid-template-columns: 1fr; }
+    .pilares-grid { grid-template-columns: 1fr; }
+    .dentro-grid { grid-template-columns: 1fr; }
+    .dentro-item-full { grid-column: span 1; flex-direction: column; gap: 20px; }
+    .stats-row { grid-template-columns: 1fr; }
+    .filtro-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 30px; text-align: center; }
+    .footer-copy { text-align: center; }
+    .footer-social { justify-content: center; }
+    .precio-box { padding: 50px 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">Efecto <span>Clavero</span></a>
+  <a href="#entrar" class="nav-cta">Entrar a la Comunidad</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-tag">La Comunidad · 9€/mes</div>
+    <p class="hero-eyebrow">Javier · Efecto Clavero</p>
+    <h1 class="hero-title">
+      El Efecto
+      <em>Clavero.</em>
+    </h1>
+    <p class="hero-subtitle">Para el hombre que está harto de saber lo que tiene que hacer y no hacerlo.</p>
+    <div class="price-badge">
+      <strong>9€</strong>
+      <span>al mes · cancela cuando quieras</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#entrar" class="btn-primary">Entrar ahora</a>
+      <a href="#dentro" class="btn-ghost">Qué hay dentro</a>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="quote-section">
+  <p class="quote-text">
+    "Tú no necesitas más información. Necesitas un <strong>sistema que funcione cuando no tienes ganas</strong>. Eso es lo que construimos aquí."
+  </p>
+</div>
+
+<!-- PROBLEMA -->
+<section style="background: var(--negro);">
+  <div style="max-width: 1300px; margin: 0 auto;">
+    <p class="section-label reveal">El Problema Real</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Llevas tiempo intentándolo.<br><em>El desorden sigue ahí.</em>
+    </h2>
+    <p class="reveal reveal-delay-2" style="font-size: 15px; color: var(--gris-texto); max-width: 600px; line-height: 1.8; margin-bottom: 0;">
+      Has leído libros. Has visto vídeos. Has empezado rutinas que duran dos semanas. Y sigues en el mismo punto.
+    </p>
+  </div>
+
+  <div class="problema-grid">
+    <div class="problema-item reveal">
+      <div class="problema-icon"></div>
+      <p><strong>Te hablan de mentalidad</strong> — y el lunes vuelves al mismo patrón de siempre.</p>
+    </div>
+    <div class="problema-item reveal reveal-delay-1">
+      <div class="problema-icon"></div>
+      <p><strong>Te hablan de hábitos</strong> — y sin estructura real, nada se fragua.</p>
+    </div>
+    <div class="problema-item reveal reveal-delay-2">
+      <div class="problema-icon"></div>
+      <p><strong>Te hablan de finanzas</strong> — y sin mando personal primero, el dinero sigue escapándose.</p>
+    </div>
+    <div class="problema-item reveal reveal-delay-3">
+      <div class="problema-icon"></div>
+      <p><strong>El postureo del desarrollo personal</strong> — mucho contenido. Cero ingeniería detrás.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUCIÓN / PILARES -->
+<section style="background: var(--charcoal); border-top: 1px solid rgba(201,168,76,0.1); border-bottom: 1px solid rgba(201,168,76,0.1);">
+  <div style="max-width: 1300px; margin: 0 auto;">
+    <p class="section-label reveal">La Solución</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      El sistema que integra<br><em>los tres pilares.</em>
+    </h2>
+    <p class="reveal reveal-delay-2" style="font-size: 15px; color: var(--gris-texto); max-width: 640px; line-height: 1.8;">
+      Mando Personal, Estructura de Activos y Soberanía Social no son tres cosas separadas. Son una sola arquitectura. Cuando se trabajan juntas, en el orden correcto, el cambio no se evapora. Se fragua.
+    </p>
+  </div>
+
+  <div class="pilares-grid">
+    <div class="pilar reveal">
+      <div class="pilar-num">01</div>
+      <h3 class="pilar-name">Mando Personal</h3>
+      <p class="pilar-sub">Protocolos de Disciplina</p>
+      <div class="pilar-divider"></div>
+      <p class="pilar-desc">La disciplina real. No fuerza de voluntad. Protocolos de entorno, sistemas de decisión y auditoría de rutinas. La viga maestra de todo lo demás.</p>
+    </div>
+    <div class="pilar reveal reveal-delay-1">
+      <div class="pilar-num">02</div>
+      <h3 class="pilar-name">Estructura de Activos</h3>
+      <p class="pilar-sub">Orden Financiero y Profesional</p>
+      <div class="pilar-divider"></div>
+      <p class="pilar-desc">Diagnóstico de flujos, mapa de activos y estrategia de construcción económica. Lo que tienes y lo que pierdes, con precisión.</p>
+    </div>
+    <div class="pilar reveal reveal-delay-2">
+      <div class="pilar-num">03</div>
+      <h3 class="pilar-name">Soberanía Social</h3>
+      <p class="pilar-sub">Gestión de Límites y Autoridad</p>
+      <div class="pilar-divider"></div>
+      <p class="pilar-desc">Cómo te perciben, cómo te tratan y cuánto permites. Se construye con consistencia, no con carisma.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUÉ HAY DENTRO -->
+<section class="dentro-section" id="dentro">
+  <div style="max-width: 1300px; margin: 0 auto;">
+    <p class="section-label reveal">Qué hay dentro</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Al entrar, accedes a todo<br><em>desde el primer día.</em>
+    </h2>
+  </div>
+
+  <div class="dentro-grid">
+    <div class="dentro-item reveal">
+      <p class="dentro-num">01</p>
+      <h3 class="dentro-title">Protocolos Semanales</h3>
+      <p class="dentro-desc">Cada semana un protocolo operativo sobre uno de los tres pilares. No teoría — instrucciones concretas para implementar en tu vida real. Diseñados para funcionar aunque no tengas ganas.</p>
+    </div>
+
+    <div class="dentro-item reveal reveal-delay-1">
+      <p class="dentro-num">02</p>
+      <h3 class="dentro-title">Sesión en Directo con Javier cada 15 días</h3>
+      <p class="dentro-desc">En vivo. Con Javier presente y accesible. Preguntas reales, diagnósticos reales, feedback directo. Grabado para quien no pueda estar en directo. Nada se pierde.</p>
+    </div>
+
+    <div class="dentro-item reveal reveal-delay-2">
+      <p class="dentro-num">03</p>
+      <h3 class="dentro-title">Archivo Completo del Método</h3>
+      <p class="dentro-desc">Todas las sesiones anteriores grabadas. Protocolos anteriores disponibles. Todo accesible desde el día 1. El archivo crece cada semana.</p>
+    </div>
+
+    <div class="dentro-item reveal reveal-delay-3">
+      <p class="dentro-num">04</p>
+      <h3 class="dentro-title">Comunidad de Hombres que Operan Igual</h3>
+      <p class="dentro-desc">No un grupo de motivación. Un entorno donde el estándar es el mando, la disciplina y la responsabilidad individual. Te rodeas de hombres que normalizan lo mismo que tú quieres normalizar.</p>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" style="margin-top: 2px;">
+    <div class="stat reveal">
+      <div class="stat-num">2</div>
+      <p class="stat-label">Sesiones en directo<br>al mes con Javier</p>
+    </div>
+    <div class="stat reveal reveal-delay-1">
+      <div class="stat-num">4</div>
+      <p class="stat-label">Protocolos operativos<br>al mes</p>
+    </div>
+    <div class="stat reveal reveal-delay-2">
+      <div class="stat-num">9€</div>
+      <p class="stat-label">Al mes · cancela<br>cuando quieras</p>
+    </div>
+  </div>
+</section>
+
+<!-- FILTRO -->
+<section style="background: var(--negro);">
+  <div style="max-width: 1300px; margin: 0 auto;">
+    <p class="section-label reveal">El Filtro</p>
+    <h2 class="section-title reveal reveal-delay-1">
+      Sé honesto<br><em>contigo mismo.</em>
+    </h2>
+  </div>
+
+  <div class="filtro-grid">
+    <div class="filtro-col filtro-si reveal">
+      <p class="filtro-label">Es para ti si…</p>
+      <div class="filtro-items">
+        <div class="filtro-item">
+          <span class="filtro-arrow">→</span>
+          <p>Estás harto del postureo del desarrollo personal y quieres ingeniería real.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">→</span>
+          <p>Entiendes que la disciplina no se siente — se construye con protocolos.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">→</span>
+          <p>Estás dispuesto a transitar por la incomodidad para conseguir tu objetivo.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">→</span>
+          <p>Quieres rodearte de hombres que normalizan el mando y la responsabilidad.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">→</span>
+          <p>Sabes que el desorden en tu vida tiene una arquitectura — y quieres encontrarla.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="filtro-col filtro-no reveal reveal-delay-1">
+      <p class="filtro-label">No es para ti si…</p>
+      <div class="filtro-items">
+        <div class="filtro-item">
+          <span class="filtro-arrow">×</span>
+          <p>Buscas motivación que te dure hasta el jueves.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">×</span>
+          <p>Necesitas que te convenzan del valor antes de decidir.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">×</span>
+          <p>Crees que el desorden es culpa de las circunstancias externas.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">×</span>
+          <p>No estás dispuesto a seguir protocolos aunque no te apetezca.</p>
+        </div>
+        <div class="filtro-item">
+          <span class="filtro-arrow">×</span>
+          <p>Buscas un espacio para sentirte acompañado sin comprometerte a implementar.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRECIO -->
+<section class="precio-section" id="entrar">
+  <div class="precio-box reveal">
+    <p class="precio-eyebrow">Efecto Clavero · La Comunidad</p>
+    <p class="precio-amount"><span>9</span>€</p>
+    <p class="precio-period">al mes · cancela cuando quieras</p>
+
+    <div class="precio-includes">
+      <div class="precio-include-item">
+        <span>◆</span>
+        <p>Protocolos semanales operativos sobre los 3 pilares</p>
+      </div>
+      <div class="precio-include-item">
+        <span>◆</span>
+        <p>Sesión en directo con Javier cada 15 días (grabada)</p>
+      </div>
+      <div class="precio-include-item">
+        <span>◆</span>
+        <p>Archivo completo del Método — acceso desde el día 1</p>
+      </div>
+      <div class="precio-include-item">
+        <span>◆</span>
+        <p>Comunidad de hombres que operan con los mismos estándares</p>
+      </div>
+    </div>
+
+    <a href="https://www.skool.com/efecto-clavero-8161/about" target="_blank" rel="noopener" class="precio-cta">Entrar al Efecto Clavero ahora</a>
+    <p class="precio-disclaimer">Sin permanencia · Sin contratos · Solo resultado</p>
+  </div>
+
+  <div class="reveal reveal-delay-2" style="position: relative; z-index: 1; text-align: center; margin-top: 60px;">
+    <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 22px; color: var(--gris-texto); line-height: 1.6; max-width: 500px; margin: 0 auto 16px;">
+      Lo verás en tu disciplina.<br>En tu cuenta.<br>En cómo te tratan desde que recuperaste el mando.
+    </p>
+    <div style="width: 60px; height: 1px; background: rgba(201,168,76,0.3); margin: 24px auto 0;"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Efecto <span>Clavero</span></div>
+    <p class="footer-tagline">Arquitectura de Soberanía Personal</p>
+  </div>
+
+  <div class="footer-social">
+    <a href="https://www.instagram.com/javierefectoclavero/" target="_blank" rel="noopener" class="social-link">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Instagram
+    </a>
+    <a href="https://www.youtube.com/@javierefectoclavero" target="_blank" rel="noopener" class="social-link">
+      <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      YouTube
+    </a>
+  </div>
+
+  <p class="footer-copy">
+    © 2025 Efecto Clavero<br>
+    Todos los derechos reservados
+  </p>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 80);
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
